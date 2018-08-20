@@ -1,0 +1,177 @@
+<div class="content-area">
+  <div class="container-fluid">
+    <button class="btn btn-outline" (click)="openForm()">Nuevo artículo</button>
+
+    <div class="row">
+      <div class="col-md-12">
+        <clr-datagrid [ngClass]="{'prevent': products.length < 8}">
+          <clr-dg-column [clrDgField]="'product_id'">
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Número de artículo
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Descripción
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Marca
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: true}">
+              Código de barras
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Categoría
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: true}">
+              Precio sugerido
+            </ng-container>
+          </clr-dg-column>
+
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Precio de compra
+            </ng-container>
+          </clr-dg-column>
+
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Precio de venta
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              En inventario
+            </ng-container>
+          </clr-dg-column>
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Minímo
+            </ng-container>
+          </clr-dg-column>
+
+          <clr-dg-column>
+            <ng-container *clrDgHideableColumn="{hidden: false}">
+              Máximo
+            </ng-container>
+          </clr-dg-column>
+
+          <clr-dg-placeholder>Aún no has registrado artículos.</clr-dg-placeholder>
+
+          <clr-dg-row *clrDgItems="let product of products">
+            <clr-dg-action-overflow>
+              <button class="action-item" (click)="openForm(product)">Editar</button>
+              <button class="action-item" (click)="productDelete(product)">Eliminar</button>
+            </clr-dg-action-overflow>
+
+            <clr-dg-cell>{{product.product_id}}</clr-dg-cell>
+            <clr-dg-cell>{{product.description}}</clr-dg-cell>
+            <clr-dg-cell>{{product.brand}}</clr-dg-cell>
+            <clr-dg-cell>{{product.bar_code}}</clr-dg-cell>
+            <clr-dg-cell>{{product.category}}</clr-dg-cell>
+
+            <clr-dg-cell>{{product.suggestedPrice | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+
+            <clr-dg-cell>{{product.price | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+
+            <clr-dg-cell>
+              {{ product.salePrice ? (product.salePrice | currency:'MXN':'symbol-narrow') : (product.suggestedPrice | currency:'MXN':'symbol-narrow')
+              }}
+            </clr-dg-cell>
+            <clr-dg-cell>{{product.stock}}</clr-dg-cell>
+            <clr-dg-cell>{{product.min}}</clr-dg-cell>
+            <clr-dg-cell>{{product.max}}</clr-dg-cell>
+          </clr-dg-row>
+
+          <clr-dg-footer></clr-dg-footer>
+
+        </clr-datagrid>
+      </div>
+    </div>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="showForm" [clrModalSize]="'xl'">
+  <h3 class="modal-title">Formulario artículo</h3>
+  <div class="modal-body">
+    <form [formGroup]="productForm">
+      <div class="form-group">
+        <label>Número de artículo</label>
+        <input type="text" placeholder="Número de artículo" size="50" formControlName="product_id">
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <input type="text" placeholder="Descripción" size="50" formControlName="description">
+      </div>
+      <div class="form-group">
+        <label>Marca</label>
+        <input type="text" placeholder="Marca" size="50" formControlName="brand">
+      </div>
+      <div class="form-group">
+        <label>Código de barras</label>
+        <input type="text" placeholder="Código de barras" size="50" formControlName="bar_code">
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <div class="select">
+          <select formControlName="category">
+            <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Unidad</label>
+        <div class="select">
+          <select formControlName="unit">
+            <option *ngFor="let unit of units" [value]="unit">{{unit}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Mínimo</label>
+        <input type="number" placeholder="Mínimo" size="50" formControlName="min">
+      </div>
+      <div class="form-group">
+        <label>Máximo</label>
+        <input type="number" placeholder="Máximo" size="50" formControlName="max">
+      </div>
+
+      <div class="form-group">
+        <label>Precio de compra</label>
+        <input type="number" placeholder="Precio de compra" size="50" formControlName="price">
+      </div>
+
+      <div class="form-group">
+        <label>Precio de venta (sin IVA)</label>
+        <input type="number" placeholder="Precio sin IVA" size="50" name="noiva" formControlName="noiva" (keyup)="calculateWithOutIva()">
+
+        <label>Precio de venta (con IVA)</label>
+        <input type="number" placeholder="Precio con IVA" size="50" formControlName="salePrice" (keyup)="calculateWithIva()">
+      </div>
+      <div class="form-group">
+        <label>Cantidad en inventario</label>
+        <input type="number" placeholder="Cantidad en inventario" size="50" formControlName="stock">
+      </div>
+      <button class="btn btn-primary" [disabled]="productForm.invalid" (click)="productCreate()">Guardar</button>
+    </form>
+  </div>
+  <!-- <div class="modal-footer">
+      <button type="button" class="btn btn-outline" (click)="showForm = false">Cancelar</button>
+
+  </div> -->
+</clr-modal>
+
+<style>
+  .prevent {
+    margin-top: 12em;
+  }
+</style>

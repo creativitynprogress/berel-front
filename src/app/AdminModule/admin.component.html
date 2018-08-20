@@ -1,0 +1,33 @@
+<div class="main-container">
+  <header class="header-6">
+    <div class="branding">
+        <a href="..." class="nav-link">
+            <span class="title">Admin - BCODE COLORS</span>
+        </a>
+    </div>
+    <div class="header-actions">
+        <clr-dropdown>
+            <button class="nav-text" clrDropdownTrigger>
+                {{user.email}}
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+            <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                <a (click)="logOut()" clrDropdownItem>Cerrar sesión</a>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+    </div>
+  </header>
+  <div class="content-container">
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+    <clr-vertical-nav>
+        <a clrVerticalNavLink routerLink="users" routerLinkActive="active">Usuarios</a>
+        <a clrVerticalNavLink routerLink="lines" routerLinkActive="active">Lineas</a>
+        <a clrVerticalNavLink routerLink="bases" routerLinkActive="active">Bases</a>
+        <a clrVerticalNavLink routerLink="paints" routerLinkActive="active">Pinturas</a>
+        <a clrVerticalNavLink routerLink="inks" routerLinkActive="active">Tintas</a>
+        <!-- <a clrVerticalNavLink routerLink="products" routerLinkActive="active">Productos</a> -->
+    </clr-vertical-nav>
+  </div>
+</div>

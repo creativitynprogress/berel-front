@@ -1,0 +1,133 @@
+<!-- Pagos -->
+<div *ngIf="ticket.total > 0">
+  <h4 style="margin-bottom: 1em;"><span *ngIf="ticket._id">Pagos</span>
+  </h4>
+
+  <div style="clear:both;"></div>
+  <div *ngIf="ticket._id">
+    <clr-tabs *ngIf="!ticket.payed">
+      <clr-tab>
+        <button clrTabLink>Efectivo</button>
+        <clr-tab-content *clrIfActive>
+          <div class="" style="margin-left: 1em; margin-top: 2em;">
+            <label>Cantidad:</label>
+            <input style="display: inline-block;" [(ngModel)]="cash_amount" (ngModelChange)="calculateChange($event)" type="number" size="100">
+
+            <button [disabled]="!cash_amount" (click)="add_cash(cash_amount)" style="float: right;" type="button" class="btn btn-icon">
+              <span *ngIf="!(checkPayComplete(cash_amount))">Abonar</span> <span *ngIf="checkPayComplete(cash_amount)">Pagar</span>
+            </button>
+
+            <div style="margin-top:0.2rem;">
+                Cambio:
+                <span>{{change | currency:'MXN':'symbol-narrow'}}</span>
+              </div>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <clr-tab>
+        <button clrTabLink>Tarjeta</button>
+        <clr-tab-content *clrIfActive>
+          <div class="form-group">
+            <label for="aForm_3">Terminal: </label>
+            <div class="select">
+              <select id="aForm_3" [(ngModel)]="card_selected">
+                <option *ngFor="let card of cards" [value]="card._id">{{card.terminal}} - {{card.type == 'debit' ? 'Débito' : 'Credito'}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="" style="margin-left: 1em; margin-top: 2em;">
+            <label>Cantidad:</label>
+            <input style="display: inline-block;" [(ngModel)]="card_amount" (ngModelChange)="calculateChange($event)" type="number" size="100">
+
+            <button [disabled]="!card_amount || !card_selected" (click)="add_card()" style="float: right;" type="button" class="btn btn-icon">
+              <span *ngIf="!(checkPayComplete(card_amount))">Abonar</span> <span *ngIf="checkPayComplete(card_amount)">Pagar</span>
+            </button>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <clr-tab>
+        <button clrTabLink [disabled]="!ticket.client">Cheque</button>
+        <clr-tab-content *clrIfActive>
+          <div class="form-group">
+            <label for="number_check">Número de cheque:</label>
+            <input type="number" id="number_check" size="100" [(ngModel)]="check_number">
+          </div>
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label for="check_amount">Cantidad:</label>
+            <input type="number" id="check_amount" size="100" style="margin-left: 66px;" [(ngModel)]="check_amount">
+          </div>
+
+          <button class="btn btn-primary btn-sm btn-block" (click)="add_check()" [disabled]="!check_number || !check_amount">Confirmar cheque</button>
+        </clr-tab-content>
+      </clr-tab>
+      <clr-tab>
+        <button clrTabLink [disabled]="!ticket.client">Transferencia</button>
+        <clr-tab-content *clrIfActive>
+          <div class="form-group">
+            <label for="number_check">Número de referencia:</label>
+            <input type="number" id="number_check" size="100" [(ngModel)]="transfer_reference">
+          </div>
+          <div class="form-group">
+            <label for="number_check2">Folio:</label>
+            <input type="number" id="number_check2" size="100" [(ngModel)]="transfer_folio">
+          </div>
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label for="number_check3">Cantidad:</label>
+            <input type="number" id="number_check3" size="100" [(ngModel)]="transfer_amount">
+          </div>
+
+          <button class="btn btn-primary btn-sm btn-block" (click)="add_transfer()"
+          [disabled]="!transfer_reference || !transfer_folio || !transfer_amount">Confirmar transferencia</button>
+        </clr-tab-content>
+      </clr-tab>
+      <!-- <clr-tab>
+        <button clrTabLink [disabled]="!ticket.client">Abono a cuenta</button>
+        <clr-tab-content *clrIfActive>
+          ...
+        </clr-tab-content>
+      </clr-tab> -->
+    </clr-tabs>
+    <br>
+
+    <div *ngIf="ticket.cash_pays?.length > 0">
+      <label><b>Pagos en efectivo</b></label>
+      <div *ngFor="let pay of ticket.cash_pays; let i = index;">
+        Efectivo
+        <span style="float:right;">{{pay.amount | currency:'MXN':'symbol-narrow'}}</span>
+      </div>
+      <br>
+    </div>
+
+    <div *ngIf="ticket.card_pays?.length > 0">
+      <label><b>Pagos con tarjeta</b></label>
+      <div *ngFor="let pay of ticket.card_pays; let i = index;">
+        {{pay.card?.terminal}}, {{pay.card?.type == 'Credit' ? 'Crédito' : 'Debito'}}
+
+        <span style="float:right;">{{pay.amount | currency:'MXN':'symbol-narrow'}}</span>
+      </div>
+      <br>
+    </div>
+
+    <div *ngIf="ticket.checks?.length > 0">
+      <label><b>Cheques</b></label>
+      <div *ngFor="let check of ticket.checks; let i = index;">
+        Número de cheque: {{check.check_number}}
+
+        <span style="float:right;">{{check.amount | currency:'MXN':'symbol-narrow'}}</span>
+      </div>
+      <br>
+    </div>
+
+    <div *ngIf="ticket.transfers?.length > 0">
+      <label><b>Tranferencias</b></label>
+      <div *ngFor="let transfer of ticket.transfers">
+        Número de referencia: {{transfer.reference}}
+
+        <span style="float:right;">{{transfer.amount | currency:'MXN':'symbol-narrow'}}</span>
+      </div>
+      <br>
+    </div>
+  </div>
+</div>

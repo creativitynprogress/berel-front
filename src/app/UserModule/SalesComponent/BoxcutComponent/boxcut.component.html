@@ -1,0 +1,158 @@
+<div class="container-fluid" style="width: 100%; padding-bottom: 2em;" [clrLoading]="loading">
+  <div class="row" *ngIf="boxcut_details">
+    <div class="col-md-3">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Folio</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of boxcut_details.tickets" class="ticket" [ngClass]="{'ticket-selected': ticket_selected && ticket_selected._id == ticket._id, 'canceled': ticket.canceled}"
+            (click)="selectTicket(ticket)">
+            <td>{{ticket.date | date:'HH:mm'}}</td>
+            <td>{{ticket.folio}}</td>
+            <td>{{(ticket.total - ticket.discount.quantity) | currency:'MXN':'symbol-narrow'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-9" *ngIf="ticket_selected">
+      <span class="label label-danger" *ngIf="ticket_selected.canceled">Ticket cancelado</span>
+      <div *ngIf="ticket_selected.paints.length > 0">
+        <h4>Pinturas</h4>
+        <table class="table table-noborder">
+          <thead>
+            <tr>
+              <th>Línea</th>
+              <th>Color</th>
+              <th>Presentación</th>
+              <th>Cantidad</th>
+              <th>Costo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let paint of ticket_selected.paints">
+              <td>{{paint.line}}</td>
+              <td>{{paint.color}}</td>
+              <td>{{paint.presentation}}</td>
+              <td>{{paint.quantity}}</td>
+              <td>{{paint.price | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="ticket_selected.bases.length > 0">
+        <h4>Bases</h4>
+        <table class="table table-noborder">
+          <thead>
+            <tr>
+              <th>Línea</th>
+              <th>ID</th>
+              <th>Presentación</th>
+              <th>Cantidad</th>
+              <th>Costo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let base of ticket_selected.bases">
+              <td>{{base.line}}</td>
+              <td>{{base.product_id}}</td>
+              <td>{{base.presentation}}</td>
+              <td>{{base.quantity}}</td>
+              <td>{{base.price | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="ticket_selected.products.length > 0">
+        <h4>Productos</h4>
+
+        <table class="table table-noborder">
+          <thead>
+            <tr>
+              <th>Número de artículo</th>
+              <th>Marca</th>
+              <th>Descripción</th>
+              <th>Unidad</th>
+              <th>Cantidad</th>
+              <th>Costo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of ticket_selected.products">
+              <td>{{product.product_id}}</td>
+              <td>{{product.brand}}</td>
+              <td>{{product.description}}</td>
+              <td>{{product.unit}}</td>
+              <td>{{product.quantity}}</td>
+              <td>{{product.price | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="padding: 0 2em;">
+        <h4>Pagos</h4>
+
+        <span *ngIf="ticket_selected.discount.quantity > 0">
+            <b>Descuento por:</b> {{ticket_selected.discount.quantity | currency:'MXN':'symbol-narrow'}}
+        </span>
+
+        <div *ngIf="ticket_selected.cash_pays?.length > 0">
+          <label>
+            <b>Pagos en efectivo</b>
+          </label>
+          <div *ngFor="let pay of ticket_selected.cash_pays">
+            Efectivo
+            <span style="float:right;">{{pay.amount | currency:'MXN':'symbol-narrow'}}</span>
+          </div>
+          <br>
+        </div>
+
+        <div *ngIf="ticket_selected.card_pays?.length > 0">
+          <label>
+            <b>Pagos con tarjeta</b>
+          </label>
+          <div *ngFor="let pay of ticket_selected.card_pays">
+            {{pay.card?.terminal}}, {{pay.card?.type == 'Credit' ? 'Crédito' : 'Debito'}}
+
+            <span style="float:right;">{{pay.amount | currency:'MXN':'symbol-narrow'}}</span>
+          </div>
+          <br>
+        </div>
+        <div>
+          Total
+          <span style="float:right;">{{(ticket_selected.total - ticket_selected.discount.quantity) | currency:'MXN':'symbol-narrow'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .ticket-selected {
+    background-color: rgba(198, 198, 198, 0.6);
+  }
+
+  .ticket {
+    cursor: pointer;
+  }
+
+  .ticket:hover {
+    background-color: rgba(198, 198, 198, 0.3);
+  }
+
+  .canceled {
+      background-color: #FFCDD2;
+    }
+
+</style>

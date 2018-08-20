@@ -1,0 +1,250 @@
+<div class="container-fluid" style="margin-top: 1em;">
+  <button class="btn btn-outline" (click)="open_modal()">Registrar compra</button>
+
+  <clr-datagrid>
+    <clr-dg-column>Fecha</clr-dg-column>
+    <clr-dg-column>Proveedor</clr-dg-column>
+    <clr-dg-column>Total</clr-dg-column>
+
+    <clr-dg-row *ngFor="let bp of purchases">
+      <clr-dg-action-overflow>
+        <button class="action-item" (click)="open_delete_modal(bp)">Eliminar</button>
+      </clr-dg-action-overflow>
+
+      <clr-dg-cell>{{bp.date | date:'dd/MM/yyyy hh:mm'}}</clr-dg-cell>
+      <clr-dg-cell>{{bp.provider?.name}}</clr-dg-cell>
+      <clr-dg-cell>{{getTotalPurchase(bp) | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+
+      <clr-dg-row-detail *clrIfExpanded>
+        <table class="table table-compact" style="flex: 0 30%;" *ngIf="bp.bases.length > 0">
+          <thead>
+            <tr>
+              <th>Base - ID</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let base of bp.bases">
+              <td>{{base.base?.product_id}}</td>
+              <td>{{base.quantity}}</td>
+              <td>{{base.total | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-compact" [ngClass]="{'set-margin': bp.bases.length > 0}" style="flex: 0 30%;" *ngIf="bp.inks.length > 0">
+          <thead>
+            <tr>
+              <th>Tinta - ID</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ink of bp.inks">
+              <td>{{ink.ink?.product_id}}</td>
+              <td>{{ink.quantity}}</td>
+              <td>{{ink.total | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-compact" [ngClass]="{'set-margin': bp.products_owner.length > 0}" style="flex: 0 30%;" *ngIf="bp.products_owner.length > 0">
+            <thead>
+              <tr>
+                <th>Producto - ID</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of bp.products_owner">
+                <td>{{product.product?.product_id}}</td>
+                <td>{{product.quantity}}</td>
+                <td>{{product.total | currency:'MXN':'symbol-narrow'}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+      </clr-dg-row-detail>
+    </clr-dg-row>
+
+  </clr-datagrid>
+</div>
+
+<clr-modal [(clrModalOpen)]="open" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <h3 class="modal-title">Registrar compra</h3>
+  <div class="modal-body">
+
+    <form>
+      <section class="form-block">
+        <label>Proveedor</label>
+        <div class="select">
+          <select id="exampleSelect1" name="provider" [(ngModel)]="provider_selected">
+            <option value="">Sin proveedor</option>
+            <option [value]="provider._id" *ngFor="let provider of providers">{{provider.name}}</option>
+          </select>
+        </div>
+      </section>
+    </form>
+
+    <ng2-completer [(ngModel)]="searchStr" [datasource]="dataService" [minSearchLength]="0" placeholder="ID de Producto o código de barras"
+      [clearSelected]="true" (selected)="selectObject($event)"></ng2-completer>
+
+    <table class="table table-compact" *ngIf="purchases_list.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>UM</th>
+          <th>Descripción</th>
+          <th>cantidad</th>
+          <th>Precio unitario</th>
+          <th>Importe</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let obj of purchases_list">
+          <td>{{obj.product_id}}</td>
+          <td>{{obj.presentation}}</td>
+          <td>{{obj.description}}</td>
+          <td>
+            <input type="number" [(ngModel)]="obj.quantity">
+          </td>
+          <td>{{obj.price | currency:'MXN':'symbol-narrow'}}</td>
+          <td>{{(obj.price * obj.quantity) | currency:'MXN':'symbol-narrow'}}</td>
+          <td>
+            <clr-icon style="cursor: pointer;" shape="trash" size="16" (click)="removePurchase(obj)"></clr-icon>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5" style="text-align: right;">
+            <b>Total</b>
+          </td>
+          <td>{{getTotal(purchases_list) | currency:'MXN':'symbol-narrow'}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <form *ngIf="purchases_list.length > 0" [formGroup]="payForm">
+      <section class="form-block">
+        <label>Pagos</label>
+        <div class="form-group">
+          <label>Agregar pago</label>
+          <input type="number" formControlName="amount">
+          <div class="select">
+            <select id="exampleSelect1" formControlName="type">
+              <option value="cash">Efectivo</option>
+              <option value="card">Tarjeta</option>
+              <option value="check">Cheque</option>
+              <option value="transfer">Transferencia</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-primary" style="margin-top: 0;" [disabled]="payForm.invalid" (click)="addPay()">Agregar pago</button>
+        </div>
+      </section>
+
+    </form>
+
+    <table class="table table-noborder table-compact" *ngIf="pays.length > 0">
+      <thead>
+          <tr>
+              <th>Form de pago</th>
+              <th>Cantidad</th>
+              <th></th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let pay of pays">
+              <td>{{pay.type == 'cash' ? 'Efectivo' : pay.type == 'card' ? 'Tarjeta' : pay.type == 'check' ? 'check' : 'Transferencia' }}</td>
+              <td>{{pay.amount | currency:'MXN':'symbol-narrow'}}</td>
+              <td>
+                <clr-icon (click)="removePay(pay)" shape="trash" size="16" style="cursor: pointer;"></clr-icon>
+              </td>
+          </tr>
+          <tr>
+            <td style="text-align: right;">
+              <b>Total:</b>
+            </td>
+            <td>
+              {{getTotalPays(pays) | currency:'MXN':'symbol-narrow'}}
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: right;">
+              <b>Total a pagar: </b>
+            </td>
+            <td>
+              {{getTotal(purchases_list) | currency:'MXN':'symbol-narrow'}}
+            </td>
+          </tr>
+      </tbody>
+  </table>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="open = false; purchases_list = [];">Cancelar</button>
+    <button class="btn btn-primary" (click)="createPurchase()" [disabled]="purchases_list.length == 0 || (getTotal(purchases_list) != getTotalPays(pays)) || loading_purchase">Confirmar compra</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="delete_modal">
+  <h3 class="modal-title">¿Estás seguro de eliminar este registro?</h3>
+  <div class="modal-body">
+    <p>Al eliminarlo se restableceran las existencias de las bases compradas.</p>
+
+    <table class="table table-compact" *ngIf="selected_base_purchase">
+      <thead>
+        <tr>
+          <th>Base - ID</th>
+          <th>Cantidad</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let base of selected_base_purchase.bases">
+          <td>{{base.base?.product_id}}</td>
+          <td>{{base.quantity}}</td>
+          <td>{{base.total | currency:'MXN':'symbol-narrow'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="delete_modal = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="confirm_delete()">Entendido, eliminar</button>
+  </div>
+</clr-modal>
+
+<style>
+  /deep/ .completer-input {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+    -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  }
+
+  /deep/ .datagrid-row-flex {
+    flex-wrap: wrap;
+  }
+
+  .set-margin {
+    margin-left: 1em;
+  }
+</style>

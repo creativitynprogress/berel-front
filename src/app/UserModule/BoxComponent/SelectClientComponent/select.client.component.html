@@ -1,0 +1,67 @@
+<a routerLink="/dashboard/subsidiary/{{subsidiaryId}}/box">Opciones ticket</a> /
+<b>Asignar cliente</b> <br><br>
+
+<clr-tabs>
+  <clr-tab>
+    <button clrTabLink>Buscar cliente</button>
+    <clr-tab-content *clrIfActive>
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>Buscar cliente por nombre o RFC </label>
+        <ng2-completer [(ngModel)]="searchStr" [datasource]="dataService" [minSearchLength]="0" placeholder="Buscar por nombre o RFC"
+          [clearSelected]="true" (selected)="selectClient($event)"></ng2-completer>
+      </div>
+
+
+      <div *ngIf="client" style="margin-top: 1rem;">
+        Nombre: {{client.name}}
+        <br> RFC: {{client.rfc}}
+        <br> Dirección: {{client.address}}
+        <br> Email: {{client.email}}
+        <br> Teléfono: {{client.phone}}
+        <br>
+        <br>
+
+        <button class="btn btn-primary" [disabled]="!client" (click)="add_client()">Agregar a ticket</button>
+      </div>
+
+    </clr-tab-content>
+  </clr-tab>
+
+  <clr-tab>
+    <button clrTabLink>Agregar cliente</button>
+    <clr-tab-content *clrIfActive>
+
+        <form [formGroup]="clientForm">
+            <section class="form-block">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" placeholder="Nombre cliente" size="45" formControlName="name">
+              </div>
+              <div class="form-group">
+                <label>RFC</label>
+                <input type="text" placeholder="RFC" size="45" formControlName="rfc">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="text" placeholder="Email" size="45" formControlName="email">
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" placeholder="Teléfono" size="45" formControlName="phone">
+              </div>
+              <div class="form-group">
+                <label>Dirección</label>
+                <textarea rows="4" formControlName="address"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Código postal</label>
+                <input type="text" placeholder="Código postal" size="45" formControlName="postal_code">
+              </div>
+            </section>
+          </form>
+
+          <button class="btn primary" [disabled]="clientForm.invalid" (click)="saveClient()">Guardar cliente</button>
+
+    </clr-tab-content>
+  </clr-tab>
+</clr-tabs>

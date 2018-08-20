@@ -1,0 +1,63 @@
+<button class="btn btn-primary" (click)="openWizzard()">Nueva tinta
+  <clr-icon shape="plus"></clr-icon>
+</button>
+
+<clr-datagrid>
+
+  <clr-dg-placeholder>No se encontraron tintas registradas</clr-dg-placeholder>
+
+  <clr-dg-column [clrDgField]="'name'">Descripción</clr-dg-column>
+  <clr-dg-column [clrDgField]="'product_id'">Número de artículo</clr-dg-column>
+  <clr-dg-column [clrDgField]="'bar_code'">Código de barras</clr-dg-column>
+  <clr-dg-column [clrDgField]="'price'">Precio</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let ink of inks">
+
+    <!-- <clr-dg-action-overflow>
+      <button class="action-item" (click)="openWizzard(ink)">Editar</button>
+      <button class="action-item">Eliminar</button>
+    </clr-dg-action-overflow> -->
+
+    <clr-dg-cell>{{ink.description}}</clr-dg-cell>
+    <clr-dg-cell>{{ink.product_id}}</clr-dg-cell>
+    <clr-dg-cell>{{ink.bar_code}}</clr-dg-cell>
+    <clr-dg-cell>{{ink.price | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+  </clr-dg-row>
+</clr-datagrid>
+
+<!-- Formulario para crear y editar inks -->
+<clr-wizard #wizard [(clrWizardOpen)]="open" clrWizardSize="xl" (clrWizardOnFinish)="saveInk()">
+  <clr-wizard-title>Nueva tinta</clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancelar</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Atrás</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Guardar</clr-wizard-button>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="inkForm.invalid">
+    <ng-template clrPageTitle>Información tinta</ng-template>
+    <form [formGroup]="inkForm">
+      <section class="form-block">
+
+        <div class="form-group">
+          <label for="aForm_1">Descripción</label>
+          <input type="text" id="aForm_1" placeholder="Nombre tinta" size="45" formControlName="description">
+        </div>
+
+        <div class="form-group">
+          <label for="aForm_1">Número de artículo</label>
+          <input type="text" id="aForm_1" placeholder="Número de artículo" size="45" formControlName="product_id">
+        </div>
+
+        <div class="form-group">
+          <label>Codigo de barras</label>
+          <input type="text" size="45" formControlName="bar_code">
+        </div>
+
+        <div class="form-group">
+          <label>Precio</label>
+          <input type="number" size="45" formControlName="price">
+        </div>
+      </section>
+    </form>
+  </clr-wizard-page>
+</clr-wizard>

@@ -1,0 +1,186 @@
+<a routerLink="/dashboard/subsidiary/{{subsidiaryId}}/box">Opciones ticket</a> / <b>Agregar pinturas</b>
+
+<div style="height: 2em;"></div>
+<clr-tabs>
+  <clr-tab>
+    <button clrTabLink>Pinturas preparadas</button>
+    <clr-tab-content *clrIfActive>
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>1.- Selecciona una línea</label>
+        <div class="select" style="width: 100%;">
+          <select id="aForm_3" [(ngModel)]="lineId" (ngModelChange)="selectLine($event)">
+            <option *ngFor="let line of lines" [value]="line._id">{{line.name}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="lineId" style="margin-top: 1rem;">
+        <label>2.- Busca por número de color</label>
+        <ng2-completer
+        [(ngModel)]="searchStr"
+        [datasource]="dataService"
+        [minSearchLength]="0"
+        placeholder="Color"
+        minSearchLength="3"
+        [clearSelected]="true"
+        textSearching="Buscando..."
+          (selected)="selectPaint($event)"></ng2-completer>
+      </div>
+
+      <div *ngIf="paint_selected" style="margin-top: 1rem;">
+        <label>3 .-Selecciona una presentación</label>
+        <h5 style="margin-top: 1rem;">Color: {{paint_selected.color}}</h5>
+        <table class="table table-compact" style="margin-top:0;">
+          <thead>
+            <tr>
+              <th>Presentación</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="presentation" [ngClass]="{'presentation-selected': presentation_selected && presentation_selected._id == presentation._id}"
+              (click)="selectPresentation(presentation)" *ngFor="let presentation of paint_selected.presentations">
+              <td>{{presentation.name}}</td>
+              <td>{{presentation.salePrice ? (presentation.salePrice | currency:'MXN':'symbol-narrow') : (presentation.suggestedPrice
+                | currency:'MXN':'symbol-narrow')}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="presentation_selected" style="margin-top: 1rem;">
+        <h5 style="margin-top: 0; display: inline-block;">Base: {{paint_selected.base}}</h5>
+        <button style="float: right; margin-right: 0; margin-top: 0;" type="button" class="btn btn-sm" *ngIf="presentation_selected && presentation_selected.elements.length > 0" (click)="printPresentation()">
+          Imprimir
+          <clr-icon shape="printer"></clr-icon>
+        </button>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Colorante</th>
+              <th>Onza</th>
+              <th>Parte de onza</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let element of presentation_selected.elements">
+              <td>{{element.ink}}</td>
+              <td>{{element.ounce}}</td>
+              <td>{{element.ouncePart}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="presentation_selected" style="margin-top: 1rem;">
+        <label>4.- Establece una cantidad y confirma pedido</label>
+
+        <table class="table table-compact">
+          <thead>
+            <tr>
+              <th>Línea</th>
+              <th>Color</th>
+              <th>Presentación</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{paint_selected.line.name}}</td>
+              <td>{{paint_selected.color}}</td>
+              <td>{{presentation_selected.name}}</td>
+              <td>
+                <input type="number" [(ngModel)]="quantity" placeholder="Establece una cantidad" style="width: 10%;">
+              </td>
+              <td>{{presentation_selected.salePrice ? (presentation_selected.salePrice * quantity | currency:'MXN':'symbol-narrow')
+                : (presentation_selected.suggestedPrice * quantity | currency:'MXN':'symbol-narrow')}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <br>
+
+      <button style="margin-bottom: 5em;" type="button" class="btn btn-primary" [disabled]="!paint_selected || !presentation_selected || !quantity"
+        (click)="savePaint()">Agregar</button>
+
+    </clr-tab-content>
+  </clr-tab>
+
+  <clr-tab>
+    <button clrTabLink>Base/Pintura</button>
+    <clr-tab-content *clrIfActive>
+
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>1.- Buscar base</label>
+        <ng2-completer [(ngModel)]="search_base" [datasource]="dataServiceBase" [minSearchLength]="0" placeholder="Color" [clearSelected]="true"
+          (selected)="selectBase($event)"></ng2-completer>
+      </div>
+
+      <div *ngIf="base_selected" style="margin-top: 1rem;">
+        <label>2.- Establece una cantidad y confirma pedido</label>
+
+        <table class="table table-compact">
+          <thead>
+            <tr>
+              <th>Línea</th>
+              <th>ID</th>
+              <th>Presentación</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{base_selected.base?.line.name}}</td>
+              <td>{{base_selected.base?.product_id}}</td>
+              <td>{{base_selected.base?.presentation}}</td>
+              <td>
+                <input type="number" [(ngModel)]="quantity_base" placeholder="Establece una cantidad" style="width: 10%;">
+              </td>
+              <td>{{base_selected.salePrice ? (base_selected.salePrice * quantity_base | currency:'MXN':'symbol-narrow')
+                : (base_selected.base.suggestedPrice * quantity_base | currency:'MXN':'symbol-narrow')}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button style="margin-bottom: 5em;" type="button" class="btn btn-primary" [disabled]="!base_selected || !quantity_base"
+        (click)="saveBase()">Agregar</button>
+
+    </clr-tab-content>
+  </clr-tab>
+</clr-tabs>
+
+<!-- </clr-modal> -->
+
+<style>
+  .paint-selected {
+    background-color: rgba(198, 198, 198, 0.6);
+  }
+
+  .paint:hover {
+    background-color: rgba(198, 198, 198, 0.3);
+  }
+
+  .presentation-selected {
+    background-color: rgba(198, 198, 198, 0.6);
+  }
+
+  .presentation:hover {
+    background-color: rgba(198, 198, 198, 0.3);
+  }
+
+  :host /deep/ .completer-dropdown-holder div {
+      width: 90% !important;
+    }
+
+  :host /deep/ .completer-holder {
+    width: 100%;
+  }
+
+  :host /deep/ .completer-input {
+    display: block;
+    width: 100%;
+  }
+</style>

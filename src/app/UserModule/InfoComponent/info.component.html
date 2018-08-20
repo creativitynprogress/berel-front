@@ -1,0 +1,28 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <form [formGroup]="subsidiaryForm">
+        <section class="form-block">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" size="100" formControlName="name">
+          </div>
+          <div class="form-group">
+              <label>Dirección</label>
+              <input type="text" size="100" formControlName="address">
+            </div>
+            <div class="form-group">
+                <label>RFC</label>
+                <input type="text" size="100" formControlName="rfc">
+              </div>
+              <div class="form-group">
+                  <label>Texto ticket</label>
+                  <textarea id="formFields_8" rows="5" style="width: 85%;" formControlName="text_ticket"></textarea>
+                </div>
+        </section>
+      </form>
+
+      <button (click)="save()" [clrLoading]="loading" class="btn btn-primary" [disabled]="subsidiaryForm.invalid || subsidiaryForm.pristine || loading">Guardar</button>
+    </div>
+  </div>
+</div>

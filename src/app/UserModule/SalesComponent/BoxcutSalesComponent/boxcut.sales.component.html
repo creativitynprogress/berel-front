@@ -1,0 +1,33 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h3 style="margin-bottom: 20px;">Cortes de caja</h3>
+
+      <my-date-range-picker name="mydate" [options]="options" [(ngModel)]="model_dates" required (dateRangeChanged)="filterBydate($event)"></my-date-range-picker>
+    </div>
+    <div class="col-md-12">
+      <clr-datagrid>
+        <clr-dg-column>Fecha</clr-dg-column>
+        <clr-dg-column>Pagos en efectivo</clr-dg-column>
+        <clr-dg-column>Pagos con tarjeta</clr-dg-column>
+        <clr-dg-column>Total</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let boxcut of boxcuts_filter">
+          <clr-dg-cell>{{boxcut.date | date:'dd/MM/yyyy HH:mm'}}</clr-dg-cell>
+          <clr-dg-cell>{{boxcut.cash_pays | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+          <clr-dg-cell>{{boxcut.card_pays | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+          <clr-dg-cell>{{boxcut.total | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+
+          <boxcut-details *clrIfExpanded [boxcut]="boxcut" [subsidiaryId]="subsidiaryId" ngProjectAs="clr-dg-row-detail"></boxcut-details>
+        </clr-dg-row>
+      </clr-datagrid>
+    </div>
+  </div>
+</div>
+
+<style>
+
+  /* /deep/ .mydrp {
+    float: right !important;
+  } */
+</style>

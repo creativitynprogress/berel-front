@@ -1,0 +1,74 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <button style="margin-top: 2em;" class="btn btn-outline" (click)="openModal()">Nuevo cliente</button>
+
+      <clr-datagrid>
+
+        <clr-dg-placeholder>No se encontraron clientes registrados</clr-dg-placeholder>
+
+        <clr-dg-column [clrDgField]="'name'">Nombre</clr-dg-column>
+        <clr-dg-column [clrDgField]="'rfc'">RFC</clr-dg-column>
+        <clr-dg-column>Dirección</clr-dg-column>
+        <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
+        <clr-dg-column [clrDgField]="'phone'">Teléfono</clr-dg-column>
+        <clr-dg-column >Código postal</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let client of clients">
+
+          <clr-dg-action-overflow>
+            <button class="action-item" (click)="openModal(client)">Editar</button>
+            <button class="action-item" routerLink="/dashboard/clients/{{client._id}}">Ver historial</button>
+          </clr-dg-action-overflow>
+
+          <clr-dg-cell>{{client.name}}</clr-dg-cell>
+          <clr-dg-cell>{{client.rfc}}</clr-dg-cell>
+          <clr-dg-cell>{{client.address}}</clr-dg-cell>
+          <clr-dg-cell>{{client.email}}</clr-dg-cell>
+          <clr-dg-cell>{{client.phone}}</clr-dg-cell>
+          <clr-dg-cell>{{client.postal_code}}</clr-dg-cell>
+
+        </clr-dg-row>
+
+      </clr-datagrid>
+    </div>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="open_form" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <h3 class="modal-title">Formulario cliente</h3>
+  <div class="modal-body">
+    <form [formGroup]="clientForm">
+      <section class="form-block">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" placeholder="Nombre cliente" size="45" formControlName="name">
+        </div>
+        <div class="form-group">
+          <label>RFC</label>
+          <input type="text" placeholder="RFC" size="45" formControlName="rfc">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="text" placeholder="Email" size="45" formControlName="email">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" placeholder="Teléfono" size="45" formControlName="phone">
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <textarea rows="4" formControlName="address"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Código postal</label>
+          <input type="text" placeholder="Código postal" size="45" formControlName="postal_code">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="open_form = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="clientForm.invalid" (click)="saveClient()">Guardar</button>
+  </div>
+</clr-modal>

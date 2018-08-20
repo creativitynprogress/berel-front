@@ -1,0 +1,80 @@
+<div class="content-area" style="height: 100vh;">
+  <div class="container-login">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-4 col-sm-12" style="background-color: #E53935;
+        border-radius: 15px;">
+          <form class="login">
+            <label class="title">
+              Panel de Administración
+
+              <h5 class="hint">Usa tus credenciales para iniciar sesión</h5>
+            </label>
+            <form class="login-group" [formGroup]="loginForm">
+              <input class="username" type="text" id="login_username" placeholder="Email" formControlName="email" style="border-radius: 6px;
+                          height: 2.5em; margin-top: 1em;">
+              <br>
+              <input class="password" type="password" id="login_password" placeholder="Password" formControlName="password" style="border-radius: 6px;
+                          height: 2.5em; margin-top: 1em;">
+
+
+              <div class="alert alert-danger" *ngIf="errorMessage">
+                <div class="alert-items">
+                  <div class="alert-item static">
+                    <span class="alert-text">
+                      {{errorMessage}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1em;" [disabled]="loginForm.invalid || loading"
+                (click)="localLogin()">Iniciar sesión</button>
+            </form>
+          </form>
+        </div>
+        <div class="col-md-8">
+          <img src="./assets/images/B-CODE COLORS.png" alt="" style="margin-top: 20%;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 70%;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  input {
+    width: 100%;
+    margin-top: 0.5em;
+  }
+
+  .title {
+    font-size: 2em;
+    color: white;
+  }
+
+  .hint {
+    color: white;
+  }
+
+  .login {
+    padding: 2em;
+  }
+
+  .container-login {
+    background-color: #C00C1C;
+    margin-left: auto;
+    margin-right: auto;
+    vertical-align: middle;
+    position: absolute;
+    top: 15%;
+    left: 18%;
+    /* height: 30%; */
+    width: 65%;
+    /* margin: -15% 0 0 -25%; */
+    padding: 4em;
+    border-radius: 15px;
+  }
+</style>

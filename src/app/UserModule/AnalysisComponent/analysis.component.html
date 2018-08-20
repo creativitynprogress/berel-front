@@ -1,0 +1,11 @@
+<div class="content-area">
+  <div class="container-fluid">
+
+    <my-date-range-picker name="mydate" [options]="options" [(ngModel)]="model_dates" required (dateRangeChanged)="filterBydate($event)"></my-date-range-picker>
+
+    <canvas baseChart width="400" height="200"
+    [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+      [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" (chartHover)="chartHovered($event)"
+      (chartClick)="chartClicked($event)"></canvas>
+  </div>
+</div>

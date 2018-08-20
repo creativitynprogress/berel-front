@@ -1,0 +1,61 @@
+<div class="container-fluid">
+  <div class="row">
+
+      <div class="col-md-12">
+
+          <div class="card">
+            <div class="card-block">
+              <h3 class="card-title">Filtros</h3>
+              <div class="card-text">
+                <my-date-range-picker name="mydate2" [options]="options" [(ngModel)]="model_dates" required (dateRangeChanged)="selectDates($event)"></my-date-range-picker>
+
+
+                <div class="select">
+                  <select [(ngModel)]="purchase_type">
+                    <option value="all">Todas las compras</option>
+                    <option value="paints_bases">Pinturas y Bases</option>
+                    <option value="products">Articulos</option>
+                  </select>
+                </div>
+
+                <div class="select" *ngIf="purchase_type == 'paints_bases'" style="margin-top: 1em;">
+                  <select id="selects_1" [(ngModel)]="line">
+                    <option value="select">Todas las líneas</option>
+                    <option value="{{line.name}}" *ngFor="let line of lines">{{line.name}}</option>
+                  </select>
+                </div>
+
+                <div class="field" *ngIf="purchase_type != 'all'" style="margin-top: 1em">
+                  <input placeholder="Burscar por ID" type="text" [(ngModel)]="product_id" style="width: 100%;">
+                </div>
+
+                <button class="btn primary" (click)="filter()" style="margin-top: 1em;">Aplicar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    <div class="col-md-12">
+      <clr-datagrid class="datagrid-compact">
+
+        <clr-dg-placeholder>No se encontraron compras</clr-dg-placeholder>
+
+        <clr-dg-column>Fecha</clr-dg-column>
+        <clr-dg-column>Forma de Pago</clr-dg-column>
+        <clr-dg-column>ID Producto/ ID Color</clr-dg-column>
+        <clr-dg-column>Línea</clr-dg-column>
+        <clr-dg-column>Cantidad</clr-dg-column>
+        <clr-dg-column>Total</clr-dg-column>
+
+        <clr-dg-row *ngFor="let purchase of purchases_filter">
+          <clr-dg-cell>{{purchase.date | date:'dd/MM/yyyy'}}</clr-dg-cell>
+          <clr-dg-cell><span *ngFor="let pay of purchase.pay_type">{{pay + ' '}}</span></clr-dg-cell>
+          <clr-dg-cell>{{purchase.product_id}}</clr-dg-cell>
+          <clr-dg-cell>{{purchase.line ? purchase.line : 'N/A'}}</clr-dg-cell>
+          <clr-dg-cell>{{purchase.quantity}}</clr-dg-cell>
+          <clr-dg-cell>{{purchase.total | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+        </clr-dg-row>
+      </clr-datagrid>
+    </div>
+  </div>
+</div>

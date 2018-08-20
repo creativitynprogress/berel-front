@@ -1,0 +1,69 @@
+<div class="container-fluid" style="width: 100%; padding-bottom: 2em;" [clrLoading]="loading">
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Presentación</th>
+            <th>Precio sugerido</th>
+            <th>Precio de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="presentation" *ngFor="let presentation of paint_details.presentations" (click)="selectPresentation(presentation)"
+            style="cursor:pointer;" [ngClass]="{'presentation-selected': presentation_selected && presentation._id == presentation_selected._id}">
+            <td>{{presentation.name}}</td>
+            <td>{{presentation.suggestedPrice | currency:'MXN':'symbol-narrow'}}</td>
+            <td>{{presentation.salePrice ?
+              (presentation.salePrice | currency:'MXN':'symbol-narrow') :
+              (presentation.suggestedPrice | currency:'MXN':'symbol-narrow')}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <table class="table" *ngIf="presentation_selected">
+        <thead>
+          <tr>
+            <th>Colorante</th>
+            <th>Onza</th>
+            <th>Parte de onza</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let element of presentation_selected.elements">
+            <td>{{element.ink}}</td>
+            <td>{{element.ounce}}</td>
+            <td>{{element.ouncePart}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <button (click)="printPresentation()" style="float: right; margin-right: 0; margin-top: 1em;" type="button" class="btn" *ngIf="presentation_selected && presentation_selected.elements.length > 0">
+        Imprimir <clr-icon shape="printer"></clr-icon>
+      </button>
+
+      <!-- Info para seleccionar una presentación -->
+      <div class="alert alert-info" *ngIf="!presentation_selected" style="margin-top: 2em;">
+        <div class="alert-items">
+          <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+              <clr-icon class="alert-icon" shape="info-circle"></clr-icon>
+            </div>
+            <span class="alert-text">Selecciona una presentación para ver su formula.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .presentation-selected {
+    background-color: rgba(198, 198, 198, 0.6);
+  }
+
+  .presentation:hover {
+    background-color: rgba(198, 198, 198, 0.3);
+  }
+
+</style>

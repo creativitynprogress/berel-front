@@ -1,0 +1,31 @@
+<a routerLink="/dashboard/subsidiary/{{subsidiaryId}}/box">Opciones ticket</a> / <b>Agregar productos</b>
+
+<div class="form-group" style="margin-top: 1rem;">
+  <label>Buscar producto </label>
+  <ng2-completer [(ngModel)]="searchStr" [datasource]="dataService" [minSearchLength]="0" placeholder="Buscar por número de artículo o código de barras"
+    [clearSelected]="true" (selected)="selectProduct($event)"></ng2-completer>
+</div>
+
+<div *ngIf="product_selected" style="margin-top: 2em;">
+  <label>Establece cantidad y confirma</label>
+
+  <table class="table table-compact" style="margin-top:0;">
+      <thead>
+          <tr>
+              <th>ID</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td>{{product_selected.product_id}}</td>
+              <td>{{product_selected.description}}</td>
+              <td><input type="number" min="0" [(ngModel)]="quantity" placeholder="Cantidad" style="display:inline-block; width: 10%"></td>
+              <td>{{product_selected.salePrice * quantity | currency:'MXN':'symbol-narrow'}}</td>
+          </tr>
+      </tbody>
+  </table>
+  <button class="btn btn-primary" (click)="addProduct()" [disabled]="!quantity || quantity <= 0">Agregar</button>
+</div>

@@ -1,0 +1,64 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <button style="margin-top: 2em;" class="btn btn-outline" (click)="openModal()">Agregar tarjeta</button>
+
+      <clr-datagrid>
+
+        <clr-dg-placeholder>No se encontraron tarjetas registradas</clr-dg-placeholder>
+
+        <clr-dg-column>Terminal</clr-dg-column>
+        <clr-dg-column>Tipo</clr-dg-column>
+        <clr-dg-column>Comisión</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let card of cards">
+
+          <clr-dg-action-overflow>
+            <button class="action-item" (click)="deleteCard(card)">Eliminar</button>
+          </clr-dg-action-overflow>
+
+          <clr-dg-cell>{{card.terminal}}</clr-dg-cell>
+          <clr-dg-cell>{{card.type == 'debit' ? 'Débito' : 'Credito'}}</clr-dg-cell>
+          <clr-dg-cell>{{card.commision}}%</clr-dg-cell>
+        </clr-dg-row>
+
+      </clr-datagrid>
+    </div>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="open_form" [clrModalSize]="'md'" [clrModalClosable]="false">
+  <h3 class="modal-title">Formulario tarjeta</h3>
+  <div class="modal-body">
+    <form [formGroup]="cardForm">
+      <section class="form-block">
+        <div class="form-group">
+          <label>Terminal</label>
+          <div class="select" style="width: 50%;">
+            <select formControlName="terminal">
+              <option value="American Express">American Express</option>
+              <option value="MasterCard/Visa">MasterCard/Visa</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tipo</label>
+          <div class="select" style="width: 50%;">
+            <select formControlName="type">
+              <option value="credit">Credito</option>
+              <option value="debit">Débito</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Comisión (%)</label>
+          <input style="width: 50%;" type="number" placeholder="Comisión" size="45" formControlName="commision">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="open_form = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="cardForm.invalid" (click)="saveCard()">Guardar</button>
+  </div>
+</clr-modal>

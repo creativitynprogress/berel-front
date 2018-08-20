@@ -1,0 +1,30 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 *ngIf="client"><a routerLink="/dashboard/clients">Clientes</a> / {{client.name}}</h2>
+
+      <clr-datagrid>
+        <clr-dg-column>Fecha</clr-dg-column>
+        <clr-dg-column>Total</clr-dg-column>
+        <clr-dg-column>Factura</clr-dg-column>
+        <clr-dg-column>Pagado</clr-dg-column>
+
+        <clr-dg-row *ngFor="let ticket of tickets">
+          <clr-dg-cell>{{ticket.date | date:'dd/MM/yyyy HH:mm'}}</clr-dg-cell>
+          <clr-dg-cell>{{ticket.total | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+          <clr-dg-cell>{{ticket.invoice?.state === 'pending' ? 'pendiente' :
+            ticket.invoice?.state === 'invoiced' ? 'facturado' : 'no'}}</clr-dg-cell>
+          <clr-dg-cell>
+            <clr-icon shape="check" *ngIf="ticket.payed"></clr-icon>
+          </clr-dg-cell>
+
+          <ticket-details *clrIfExpanded [ticket]="ticket" [client]="client" ngProjectAs="clr-dg-row-detail"></ticket-details>
+        </clr-dg-row>
+
+        <clr-dg-footer>{{tickets.length}} Tickets</clr-dg-footer>
+      </clr-datagrid>
+    </div>
+  </div>
+
+
+</div>

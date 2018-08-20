@@ -1,0 +1,120 @@
+<div class="content-area">
+  <div class="container-fluid">
+    <button class="btn btn-outline" (click)="addEmployee()">Agregar empleado</button>
+
+    <clr-datagrid>
+      <clr-dg-placeholder>No se encontraron empleados registrados</clr-dg-placeholder>
+
+      <clr-dg-column [clrDgField]="'name'">Nombre</clr-dg-column>
+      <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
+      <clr-dg-column [clrDgField]="'role'">Cargo</clr-dg-column>
+      <clr-dg-column>Activo</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let employee of employees">
+
+          <clr-dg-action-overflow *ngIf="user && user.role == 'User'">
+              <button class="action-item" (click)="selectEmployee(employee); wizzard2 = true;">Editar empleado</button>
+            </clr-dg-action-overflow>
+
+        <clr-dg-cell>{{employee.full_name}}</clr-dg-cell>
+        <clr-dg-cell>{{employee.email}}</clr-dg-cell>
+        <clr-dg-cell>{{employee.role == 'Manager' ? 'Gerente' : 'Ventas'}}</clr-dg-cell>
+        <clr-dg-cell class="enable">
+          <div class="toggle-switch">
+            <input type="checkbox" id="{{employee._id}}" [checked]="employee.enable" (change)="update_state(employee._id, employee.enable)">
+            <label for="{{employee._id}}"></label>
+        </div>
+        </clr-dg-cell>
+      </clr-dg-row>
+    </clr-datagrid>
+  </div>
+</div>
+
+<clr-wizard #wizard [(clrWizardOpen)]="wizzard" clrWizardSize="xl" (clrWizardOnFinish)="saveEmployee()">
+  <clr-wizard-title>Nuevo empleado</clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancelar</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Atrás</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Guardar</clr-wizard-button>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="employeeForm.invalid">
+    <ng-template clrPageTitle>Información Base</ng-template>
+    <form [formGroup]="employeeForm">
+      <section class="form-block">
+
+        <div class="form-group">
+          <label for="full_name">Nombre</label>
+          <input type="text" id="full_name" placeholder="Nombre" size="45" formControlName="full_name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" id="email" placeholder="Email" size="45" formControlName="email">
+        </div>
+
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" size="45" formControlName="password">
+        </div>
+
+        <div class="form-group">
+            <label for="aForm_1">Cargo</label>
+            <div class="select" style="width: 65%">
+              <select formControlName="role">
+                <option value="Manager">Gerente</option>
+                <option value="Sales">Ventas</option>
+              </select>
+            </div>
+          </div>
+      </section>
+    </form>
+  </clr-wizard-page>
+</clr-wizard>
+
+<clr-wizard *ngIf="employee_selected" #wizard2 [(clrWizardOpen)]="wizzard2" clrWizardSize="xl" (clrWizardOnFinish)="updateEmployee()">
+    <clr-wizard-title>Actualizar empleado</clr-wizard-title>
+
+    <clr-wizard-button [type]="'cancel'">Cancelar</clr-wizard-button>
+    <clr-wizard-button [type]="'previous'">Atrás</clr-wizard-button>
+    <clr-wizard-button [type]="'finish'">Guardar</clr-wizard-button>
+
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Información Base</ng-template>
+      <form >
+        <section class="form-block">
+
+          <div class="form-group">
+            <label for="full_name">Nombre</label>
+            <input type="text" id="full_name" name="full_name" placeholder="Nombre" size="45" [(ngModel)]="employee_selected.full_name">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" placeholder="Email" size="45" [(ngModel)]="employee_selected.email">
+          </div>
+
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" name="password" size="45"  [(ngModel)]="employee_selected.password">
+          </div>
+
+          <div class="form-group">
+              <label for="aForm_1">Cargo</label>
+              <div class="select" style="width: 65%">
+                <select [(ngModel)]="employee_selected.role" name="role">
+                  <option value="Manager">Gerente</option>
+                  <option value="Sales">Ventas</option>
+                </select>
+              </div>
+            </div>
+        </section>
+      </form>
+    </clr-wizard-page>
+  </clr-wizard>
+
+<style>
+  .enable {
+    padding: 0;
+    padding-top: 5px;
+  }
+</style>

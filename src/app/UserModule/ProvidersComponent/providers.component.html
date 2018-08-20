@@ -1,0 +1,56 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <button style="margin-top: 2em;" class="btn btn-outline" (click)="open_form()">Agregar proveedor</button>
+
+      <clr-datagrid>
+
+        <clr-dg-placeholder>No se encontraron clientes registrados</clr-dg-placeholder>
+
+        <clr-dg-column [clrDgField]="'name'">Nombre</clr-dg-column>
+        <clr-dg-column>Dirección </clr-dg-column>
+        <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let provider of providers">
+
+          <clr-dg-action-overflow>
+            <button class="action-item" (click)="open_form(provider)">Editar</button>
+            <button class="action-item">Eliminar</button>
+          </clr-dg-action-overflow>
+
+          <clr-dg-cell>{{provider.name}}</clr-dg-cell>
+          <clr-dg-cell>{{provider.address}}</clr-dg-cell>
+          <clr-dg-cell>{{provider.email}}</clr-dg-cell>
+
+        </clr-dg-row>
+
+      </clr-datagrid>
+    </div>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="provider_modal" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <h3 class="modal-title">Formulario proveedor</h3>
+  <div class="modal-body">
+    <form [formGroup]="providerForm">
+      <section class="form-block">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" placeholder="Nombre proveedor" size="45" formControlName="name">
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" placeholder="Dirección" size="45" formControlName="address">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="text" placeholder="Email" size="45" formControlName="email">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="provider_modal = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="providerForm.invalid" (click)="saveProvider()">Guardar</button>
+  </div>
+</clr-modal>

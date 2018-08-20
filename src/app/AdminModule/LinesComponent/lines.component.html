@@ -1,0 +1,180 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2">
+
+      <button class="btn btn-primary" (click)="openNewLine()">Agregar línea
+        <clr-icon shape="plus"></clr-icon>
+      </button>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of lines" (click)="selectLine(line)" class="line" [ngClass]="{'line-selected': line_selected._id == line._id}"
+            style="cursor: pointer;">
+            <td>{{line.name}}</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-10">
+      <button class="btn btn-primary" *ngIf="line_selected._id != null && !loading_ranges && ranges_options.length != 0" (click)="openNewRange()">
+        Agregar rango
+        <clr-icon shape="plus"></clr-icon>
+      </button>
+
+      <clr-datagrid *ngIf="line_selected._id != null && !loading_ranges">
+        <clr-dg-column>Rango</clr-dg-column>
+        <clr-dg-column>Litro</clr-dg-column>
+        <clr-dg-column>Galón</clr-dg-column>
+        <clr-dg-column>Cubeta</clr-dg-column>
+
+        <clr-dg-placeholder>Aún no has registrado ningún rango.</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let range of ranges">
+
+          <clr-dg-action-overflow>
+            <button class="action-item" (click)="openUpdateRange(range)">Editar</button>
+            <button class="action-item" (click)="showDeleteModal(range)">Eliminar</button>
+          </clr-dg-action-overflow>
+
+          <clr-dg-cell>{{range.range}}</clr-dg-cell>
+          <clr-dg-cell>{{range.liter | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+          <clr-dg-cell>{{range.gallon | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+          <clr-dg-cell>{{range.bucket | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+        </clr-dg-row>
+
+      </clr-datagrid>
+
+      <!-- Info para seleccionar una linea -->
+      <div class="alert alert-info" *ngIf="line_selected._id == null && !loading_ranges">
+        <div class="alert-items">
+          <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+              <clr-icon class="alert-icon" shape="info-circle"></clr-icon>
+            </div>
+            <span class="alert-text">Selecciona una linea para ver los rangos.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- spinner para cuando se selecciona una línea -->
+      <div style="text-align: center; margin-top: 5em;" *ngIf="loading_ranges">
+        <span class="spinner">
+          Loading...
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="newLine">
+  <h3 class="modal-title">Nueva línea.</h3>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Nombre linea</label>
+      <input type="text" placeholder="Nombre linea" [(ngModel)]="line_name" size="45">
+    </div>
+    <br>
+    <div class="form-group">
+      <label for="aForm_3">Categoría</label>
+      <div class="select" style="width: 50%; display: inline-block;">
+        <select id="aForm_3" name="category" [(ngModel)]="line_category">
+          <option *ngFor="let category of categories">{{category}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="newLine = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="createLine()" [disabled]="!line_name">Guardar</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="newRange">
+  <h3 class="modal-title">Nuevo rango.</h3>
+  <div class="modal-body">
+    <form [formGroup]="rangeForm">
+      <section class="form-block">
+        <div class="form-group">
+          <label>Rango</label>
+          <div class="select">
+            <select formControlName="range">
+              <option *ngFor="let option of ranges_options" [value]="option">{{option}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Precio litro</label>
+          <input formControlName="liter" type="number" placeholder="Precio litro" size="45">
+        </div>
+        <div class="form-group">
+          <label>Precio galón</label>
+          <input formControlName="gallon" type="number" placeholder="Precio galón" size="45">
+        </div>
+        <div class="form-group">
+          <label>Precio cubeta</label>
+          <input formControlName="bucket" type="number" placeholder="Precio cubeta" size="45">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="newRange = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="createRange()" [disabled]="rangeForm.invalid">Guardar</button>
+  </div>
+</clr-modal>
+
+<!-- modal para editar un rango -->
+<clr-modal [(clrModalOpen)]="updateRangeModal" *ngIf="range_selected">
+  <h3 class="modal-title">Editar rango.</h3>
+  <div class="modal-body">
+    <form>
+      <section class="form-block">
+        <div class="form-group">
+          <label>Precio litro</label>
+          <input [(ngModel)]="range_selected.liter" name="liter" type="number" placeholder="Precio litro" size="45">
+        </div>
+        <div class="form-group">
+          <label>Precio galón</label>
+          <input [(ngModel)]="range_selected.gallon" name="gallon" type="number" placeholder="Precio galón" size="45">
+        </div>
+        <div class="form-group">
+          <label>Precio cubeta</label>
+          <input [(ngModel)]="range_selected.bucket" name="bucket" type="number" placeholder="Precio cubeta" size="45">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="updateRangeModal = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="updateRange()" [disabled]="!range_selected.liter || !range_selected.gallon || !range_selected.bucket">Guardar</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="deleteRangeModal">
+  <h3 class="modal-title">¿Estás seguro de eliminar este rango?</h3>
+  <div class="modal-body">
+    <p>Al eliminar un rango se veran afectadas todas las pinturas que lo incluyen.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="deleteRangeModal = false">Cancelar</button>
+    <button type="button" class="btn btn-warning" (click)="deleteRange()">Eliminar
+      <clr-icon shape="trash"></clr-icon>
+    </button>
+  </div>
+</clr-modal>
+
+<style>
+  .line-selected {
+    background-color: rgba(198, 198, 198, 0.6);
+  }
+
+  .line:hover {
+    background-color: rgba(198, 198, 198, 0.3);
+  }
+
+</style>

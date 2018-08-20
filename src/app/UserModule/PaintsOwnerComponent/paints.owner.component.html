@@ -1,0 +1,73 @@
+<div class="container-fluid">
+  <button class="btn btn-primary" (click)="openWizzard()">Nueva pintura
+    <clr-icon shape="plus"></clr-icon>
+  </button>
+
+  <clr-datagrid>
+
+    <clr-dg-placeholder>No se encontraron pinturas registradas</clr-dg-placeholder>
+
+    <clr-dg-column [clrDgField]="'color'">Color</clr-dg-column>
+    <clr-dg-column [clrDgField]="'base'">Base</clr-dg-column>
+    <clr-dg-column [clrDgField]="'line.name'">Línea</clr-dg-column>
+    <clr-dg-column>Rango</clr-dg-column>
+    <clr-dg-column>Activo</clr-dg-column>
+
+    <clr-dg-row *clrDgItems="let paint of paints">
+
+      <clr-dg-action-overflow>
+        <button class="action-item" [routerLink]="['/dashboard/paint', paint._id]">Editar</button>
+        <button class="action-item" (click)="deletePaint(paint)">Eliminar</button>
+      </clr-dg-action-overflow>
+
+      <clr-dg-cell>{{paint.color}}</clr-dg-cell>
+      <clr-dg-cell>{{paint.base}}</clr-dg-cell>
+      <clr-dg-cell>{{paint.line?.name}}</clr-dg-cell>
+      <clr-dg-cell>{{paint.range?.range}}</clr-dg-cell>
+      <clr-dg-cell></clr-dg-cell>
+    </clr-dg-row>
+  </clr-datagrid>
+</div>
+
+<clr-wizard #wizard [(clrWizardOpen)]="open" clrWizardSize="xl">
+  <clr-wizard-title>Nuevo pintura</clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancelar</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Atrás</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Siguiente</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'" (click)="savePaint()">
+    Guardar
+  </clr-wizard-button>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="!paint.color || !paint.line">
+    <ng-template clrPageTitle>Información principal</ng-template>
+    <form>
+      <section class="form-block">
+        <div class="form-group">
+          <label for="aForm_1">Color</label>
+          <input type="text" id="aForm_1" name="name" placeholder="Nombre pintura" size="60" [(ngModel)]="paint.color">
+        </div>
+        <div class="form-group">
+          <label>Base</label>
+          <input type="text" name="base" placeholder="Base" size="60" [(ngModel)]="paint.base">
+        </div>
+        <div class="form-group">
+          <label>Línea</label>
+          <div class="select" style="width: 75%">
+            <select name="line" [(ngModel)]="paint.line" (ngModelChange)="selectLine()">
+              <option *ngFor="let line of lines" [value]="line._id">{{line.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="ranges.length > 0">
+          <label>Rango</label>
+          <div class="select" style="width: 75%">
+            <select name="range" [(ngModel)]="paint.range">
+              <option *ngFor="let range of ranges" [value]="range._id">{{range.range}}</option>
+            </select>
+          </div>
+        </div>
+      </section>
+    </form>
+  </clr-wizard-page>
+</clr-wizard>

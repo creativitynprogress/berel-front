@@ -1,0 +1,68 @@
+<a routerLink="/dashboard/subsidiary/{{subsidiaryId}}/box">Opciones ticket</a> / <b>Tickets</b>
+<br>
+
+<div style="height: 2em;"></div>
+
+<button class="btn btn-primary" (click)="requestBoxcut()">Hacer corte</button>
+
+<table class="table table-compact">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Total</th>
+      <th>Pagado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ticket of tickets" class="ticket"
+    (click)="selectTicket(ticket)"
+    [ngClass]="{'ticket-selected': ticket._id == ticket_selected?._id, 'canceled': ticket.canceled}">
+      <td>{{ticket.date | date:'dd/MM/yyyy HH:mm'}}</td>
+      <td>{{(ticket.total - ticket.discount?.quantity) | currency:'MXN':'symbol-narrow'}}</td>
+      <td>
+        <clr-icon shape="check" *ngIf="ticket.payed"></clr-icon>
+        <clr-icon shape="minus" *ngIf="!ticket.payed"></clr-icon>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--  modal boxcut -->
+<clr-modal [(clrModalOpen)]="modal_boxcut">
+  <h3 class="modal-title">Confirmar corte de caja</h3>
+  <div class="modal-body">
+    <label>Fecha: {{boxcut.date | date:'dd/MM/yyyy HH:mm'}}</label>
+    <br>
+    <br>
+    <label>Efectivo: {{boxcut.cash_pays | currency:'MXN':'symbol-narrow'}}</label>
+    <br>
+    <label>Tarjeta: {{boxcut.card_pays | currency:'MXN':'symbol-narrow'}}</label>
+    <br>
+    <label>Cheques: {{boxcut.checks | currency:'MXN':'symbol-narrow'}}</label>
+    <br>
+    <label>Transferencias: {{boxcut.transfers | currency:'MXN':'symbol-narrow'}}</label>
+    <br>
+    <br>
+    <label>Tickets cancelados: {{countTicketsCanceled()}}</label> <br>
+    <label>Total: {{boxcut.total | currency:'MXN':'symbol-narrow'}}</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="modal_boxcut = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="boxcut_create()">Hacer corte</button>
+  </div>
+</clr-modal>
+
+<style>
+    .ticket-selected {
+      background-color: rgba(198, 198, 198, 0.6);
+    }
+
+    .ticket:hover {
+      background-color: rgba(198, 198, 198, 0.3);
+      cursor: pointer;
+    }
+
+    .canceled {
+      background-color: #FFCDD2;
+    }
+  </style>

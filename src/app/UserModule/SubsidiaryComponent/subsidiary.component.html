@@ -1,0 +1,33 @@
+<div class="content-container" style="height: 90vh;">
+  <div class="content-area" style="padding: 0;">
+    <router-outlet></router-outlet>
+  </div>
+  <clr-vertical-nav [clrVerticalNavCollapsible]="true">
+    <clr-vertical-nav-group routerLinkActive="active">
+      Productos
+      <clr-vertical-nav-group-children *clrIfExpanded="true">
+        <a clrVerticalNavLink routerLink="lines" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Líneas</a>
+        <a clrVerticalNavLink routerLink="products" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Artículos</a>
+        <a clrVerticalNavLink routerLink="purchases" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Compras</a>
+        <a clrVerticalNavLink routerLink="bases" routerLinkActive="active">Inventario de Bases
+        </a>
+        <a clrVerticalNavLink routerLink="inks" routerLinkActive="active">Inventario de Tintas
+        </a>
+        <a clrVerticalNavLink routerLink="paints" routerLinkActive="active">Pinturas Berel</a>
+      </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+    <clr-vertical-nav-group routerLinkActive="active">
+      Administración
+      <clr-vertical-nav-group-children *clrIfExpanded="true">
+          <a clrVerticalNavLink routerLink="info" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Sucursal</a>
+        <a clrVerticalNavLink routerLink="employees" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Empleados</a>
+        <a clrVerticalNavLink routerLink="box" routerLinkActive="active" *ngIf="role === 'Sales' || role === 'Manager'">Caja</a>
+        <a clrVerticalNavLink routerLink="sales" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Ventas</a>
+        <a clrVerticalNavLink routerLink="invoices" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Facturas</a>
+        <a clrVerticalNavLink routerLink="analysis" routerLinkActive="active" *ngIf="role === 'User' || role === 'Manager'">Análisis</a>
+      </clr-vertical-nav-group-children>
+    </clr-vertical-nav-group>
+
+  </clr-vertical-nav>
+</div>

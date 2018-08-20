@@ -1,0 +1,115 @@
+<button class="btn btn-primary" (click)="openWizzard()">Nueva base
+  <clr-icon shape="plus"></clr-icon>
+</button>
+
+<clr-datagrid>
+
+  <clr-dg-placeholder>No se encontraron bases registradas</clr-dg-placeholder>
+
+  <clr-dg-column [clrDgField]="'line.name'">Línea</clr-dg-column>
+  <clr-dg-column [clrDgField]="'presentation'">Presentación</clr-dg-column>
+  <clr-dg-column [clrDgField]="'product_id'">Número de artículo</clr-dg-column>
+  <clr-dg-column [clrDgField]="'description'">Descripción</clr-dg-column>
+  <clr-dg-column [clrDgField]="'bar_code'">Código de barras</clr-dg-column>
+  <clr-dg-column [clrDgField]="'price'">Precio</clr-dg-column>
+  <clr-dg-column>Pintura</clr-dg-column>
+  <clr-dg-column [clrDgField]="'suggestedPrice'">Precio sugerido</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let base of bases">
+
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="openWizzard(base)">Editar</button>
+      <button class="action-item" (click)="setOrRemoveSell(base)">
+        <label *ngIf="!base.can_sell">Establecer como Base/Pintura</label>
+        <label *ngIf="base.can_sell">Establecer como Base</label>
+      </button>
+      <button class="action-item">Eliminar</button>
+    </clr-dg-action-overflow>
+
+    <clr-dg-cell>{{base.line?.name}}</clr-dg-cell>
+    <clr-dg-cell>{{base.presentation}}</clr-dg-cell>
+    <clr-dg-cell>{{base.product_id}}</clr-dg-cell>
+    <clr-dg-cell>{{base.description}}</clr-dg-cell>
+    <clr-dg-cell>{{base.bar_code}}</clr-dg-cell>
+    <clr-dg-cell>{{base.price | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+    <clr-dg-cell>
+      <clr-icon shape="minus" *ngIf="!base.can_sell"></clr-icon>
+      <clr-icon shape="check" *ngIf="base.can_sell"></clr-icon>
+    </clr-dg-cell>
+    <clr-dg-cell>{{base.suggestedPrice | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+  </clr-dg-row>
+</clr-datagrid>
+
+<!-- Formulario para crear y editar bases -->
+<clr-wizard #wizard [(clrWizardOpen)]="open" clrWizardSize="xl" (clrWizardOnFinish)="saveBase()">
+  <clr-wizard-title>Nuevo producto</clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancelar</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Atrás</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Guardar</clr-wizard-button>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="baseForm.invalid">
+    <ng-template clrPageTitle>Información Base</ng-template>
+    <form [formGroup]="baseForm">
+      <section class="form-block">
+        <div class="form-group">
+          <label for="aForm_1">Número de artículo</label>
+          <input type="text" id="aForm_1" placeholder="Número de artículo" size="45" formControlName="product_id">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <input type="text" id="description" placeholder="Descripción" size="45" formControlName="description">
+        </div>
+
+        <div class="form-group">
+          <label>Codigo de barras</label>
+          <input type="text" size="45" formControlName="bar_code">
+        </div>
+
+        <div class="form-group">
+          <label for="aForm_1">Presentación</label>
+          <div class="select" style="width: 65%">
+            <select formControlName="presentation">
+              <option value="1L">1L</option>
+              <option value="4L">4L</option>
+              <option value="19L">19L</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Línea</label>
+          <div class="select" style="width: 65%">
+            <select name="line" formControlName="line">
+              <option *ngFor="let line of lines" [value]="line._id">{{line.name}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Base</label>
+          <input type="text" size="45" formControlName="base">
+        </div>
+
+        <div class="form-group">
+          <label>Precio</label>
+          <input type="number" size="45" formControlName="price">
+        </div>
+
+        <div class="form-group">
+          <label>Es Base/Pintura</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="toggle_1" formControlName="can_sell">
+            <label for="toggle_1"></label>
+        </div>
+        </div>
+
+        <div class="form-group" *ngIf="can_sell.value">
+          <label>Precio sugerido</label>
+          <input type="number" size="45" formControlName="suggestedPrice">
+        </div>
+      </section>
+    </form>
+  </clr-wizard-page>
+</clr-wizard>

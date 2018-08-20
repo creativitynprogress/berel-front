@@ -1,0 +1,53 @@
+<div class="content-area">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <clr-datagrid>
+          <clr-dg-placeholder>No se encontraron tintas registradas</clr-dg-placeholder>
+
+          <clr-dg-column>Descripción</clr-dg-column>
+          <clr-dg-column>En inventario</clr-dg-column>
+          <clr-dg-column>Mínimo</clr-dg-column>
+          <clr-dg-column>Máximo</clr-dg-column>
+
+          <clr-dg-row *clrDgItems="let ink of inks">
+
+            <clr-dg-action-overflow *ngIf="user && user.role == 'User'">
+              <button class="action-item" (click)="minmax(ink)">Editar mínimos y máximos</button>
+            </clr-dg-action-overflow>
+
+
+            <clr-dg-cell>{{ink.ink?.description}}</clr-dg-cell>
+            <clr-dg-cell>{{ink.stock}}</clr-dg-cell>
+            <clr-dg-cell>{{ink.min}}</clr-dg-cell>
+            <clr-dg-cell>{{ink.max}}</clr-dg-cell>
+          </clr-dg-row>
+        </clr-datagrid>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<clr-modal [(clrModalOpen)]="modal">
+  <h3 class="modal-title">Establece mínimos y máximos</h3>
+  <div class="modal-body">
+    <form *ngIf="is_selected">
+      <section class="form-block">
+        <div class="form-group">
+          <label for="empFirstName">Mínimo</label>
+          <input type="number" name="min" [(ngModel)]="is_selected.min">
+        </div>
+        <div class="form-group">
+          <label for="empLastName">Máximo</label>
+          <input type="number" name="max" [(ngModel)]="is_selected.max">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="modal = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="update_is()">Guardar</button>
+  </div>
+</clr-modal>

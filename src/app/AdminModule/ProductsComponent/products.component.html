@@ -1,0 +1,104 @@
+<div class="container-fluid">
+  <button class="btn btn-primary" (click)="openWizzard()">
+    Nuevo producto
+    <clr-icon shape="plus"></clr-icon>
+  </button>
+
+  <div class="row">
+    <div class="col-md-12">
+      <clr-datagrid>
+        <clr-dg-column>Número de producto</clr-dg-column>
+        <clr-dg-column>Descripción</clr-dg-column>
+        <clr-dg-column>Línea</clr-dg-column>
+        <clr-dg-column>Código de barras</clr-dg-column>
+        <clr-dg-column>Categoría</clr-dg-column>
+        <clr-dg-column>Precio sugerido</clr-dg-column>
+
+        <clr-dg-placeholder>Aún no has registrado productos.</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let product of products  ">
+
+          <clr-dg-action-overflow>
+            <button class="action-item" (click)="openWizzard(product)">Editar</button>
+            <button class="action-item" (click)="confirmDelete(product._id)">Eliminar</button>
+          </clr-dg-action-overflow>
+
+          <clr-dg-cell>{{product.product_id}}</clr-dg-cell>
+          <clr-dg-cell>{{product.description}}</clr-dg-cell>
+          <clr-dg-cell>{{product.line?.name}}</clr-dg-cell>
+          <clr-dg-cell>{{product.bar_code}}</clr-dg-cell>
+          <clr-dg-cell>{{product.category}}</clr-dg-cell>
+          <clr-dg-cell>{{product.suggestedPrice | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+        </clr-dg-row>
+
+      </clr-datagrid>
+    </div>
+  </div>
+</div>
+
+<!-- Formulario para crear y editar productos -->
+<clr-wizard #wizard [(clrWizardOpen)]="open" clrWizardSize="xl" (clrWizardOnFinish)="productUpdate()">
+  <clr-wizard-title>Nuevo producto</clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancelar</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Atrás</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Guardar</clr-wizard-button>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="productForm.invalid">
+    <ng-template clrPageTitle>Información producto</ng-template>
+    <form [formGroup]="productForm">
+      <section class="form-block">
+        <div class="form-group">
+          <label for="aForm_1">Número de artículo</label>
+          <input type="text" id="aForm_1" placeholder="ID" size="45" formControlName="product_id">
+        </div>
+
+        <div class="form-group">
+          <label>Codigo de barras</label>
+          <input type="text" size="45" formControlName="bar_code">
+        </div>
+
+        <div class="form-group">
+          <label for="aForm_1">Descripción</label>
+          <input type="text" placeholder="Nombre producto" size="45" formControlName="description">
+        </div>
+
+        <div class="form-group">
+            <label>Categoría</label>
+            <div class="select" style="width: 65%">
+              <select formControlName="category">
+                <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+              </select>
+            </div>
+          </div>
+
+        <div class="form-group">
+          <label>Unidad</label>
+          <div class="select" style="width: 65%">
+            <select formControlName="unit">
+              <option *ngFor="let u of units" [value]="u">{{u}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Precio</label>
+          <input type="number" size="45" formControlName="suggestedPrice">
+        </div>
+      </section>
+    </form>
+  </clr-wizard-page>
+</clr-wizard>
+
+<clr-modal [(clrModalOpen)]="delete">
+  <h3 class="modal-title">¿Estás seguro de eliminar este producto?</h3>
+  <div class="modal-body">
+    <p>Al eliminar un producto desaparecera de todas las sucuarsales existentes.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="delete = false">Cancelar</button>
+    <button type="button" class="btn btn-warning" (click)="productDelete()">Eliminar
+      <clr-icon shape="trash"></clr-icon>
+    </button>
+  </div>
+</clr-modal>

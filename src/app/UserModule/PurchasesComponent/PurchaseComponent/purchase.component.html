@@ -1,0 +1,204 @@
+<div class="container-fluid" style="margin-top: 1em;">
+    <ng2-completer [(ngModel)]="searchStr" [datasource]="dataService" [minSearchLength]="0" placeholder="ID de Producto o código de barras" [clearSelected]="true"
+    (selected)="selectObject($event)"></ng2-completer>
+</div>
+
+<table class="table table-compact" *ngIf="purchases.length > 0">
+    <thead>
+        <tr>
+            <th></th>
+            <th>ID</th>
+            <th>UM</th>
+            <th>Descripción</th>
+            <th>cantidad</th>
+            <th>Precio unitario</th>
+            <th>Importe</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let obj of purchases">
+            <td></td>
+            <td>{{obj.product_id}}</td>
+            <td>{{obj.presentation}}</td>
+            <td>{{obj.description}}</td>
+            <td><input type="number" [(ngModel)]="obj.quantity"></td>
+            <td>{{obj.price | currency:'MXN':'symbol-narrow'}}</td>
+            <td>{{(obj.price * obj.quantity) | currency:'MXN':'symbol-narrow'}}</td>
+        </tr>
+        <tr>
+          <td colspan="6" style="text-align: right;">
+            <b>Total</b>
+          </td>
+          <td>{{getTotal(purchases) | currency:'MXN':'symbol-narrow'}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-primary" style="margin-top: 1em;" [disabled]="purchases.length == 0">Confirmar compra</button>
+
+<!-- <clr-modal [(clrModalOpen)]="open" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <h3 class="modal-title">Registrar compras de bases</h3>
+  <div class="modal-body">
+
+    <div class="form-group" style="margin-top: 1rem;">
+      <label>Selecciona una base por ID</label>
+      <ng2-completer [(ngModel)]="searchStr" [datasource]="dataService" [minSearchLength]="0" placeholder="ID de Base o código de barras" [clearSelected]="true"
+        (selected)="selectBase($event)"></ng2-completer>
+
+      <h4 *ngIf="base_selected">Confirma cantidad</h4>
+      <table class="table table-noborder" *ngIf="base_selected">
+        <thead>
+          <tr>
+            <th>BASE</th>
+            <th>CANTIDAD</th>
+            <th>TOTAL</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{base_selected.product_id}}</td>
+            <td>
+              <div class="form-group">
+                <input type="number" id="formFields_7" placeholder="Cantidad" [(ngModel)]="quantity">
+              </div>
+            </td>
+            <td>{{(base_selected.price * quantity) | currency:'MXN':'symbol-narrow'}}</td>
+            <td>
+              <button type="button" class="btn btn-icon" (click)="confirmBase()">
+                <clr-icon shape="plus"></clr-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <br>
+      <table class="table table-compact" *ngIf="base_purchases.length > 0">
+        <thead>
+          <tr>
+            <th></th>
+            <th>BASE</th>
+            <th>CANTIDAD</th>
+            <th>COSTO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let purchase of base_purchases">
+            <td>
+              <a (click)="removeBase(purchase.base)" style="color: red; cursor: pointer;">
+                <clr-icon shape="times"></clr-icon>
+              </a>
+            </td>
+            <td>{{purchase.base?.product_id}}</td>
+            <td>{{purchase.quantity}}</td>
+            <td>{{purchase.total | currency:'MXN':'symbol-narrow'}}</td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <b>Total</b>
+            </td>
+            <td>{{total_bases | currency:'MXN':'symbol-narrow'}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>Selecciona una tinta por ID</label>
+        <ng2-completer [(ngModel)]="searchStrInk" [datasource]="dataServiceInk" [minSearchLength]="0" placeholder="ID de Tinta o código de barras" [clearSelected]="true"
+          (selected)="selectInk($event)"></ng2-completer>
+
+        <h4 *ngIf="ink_selected">Confirma cantidad</h4>
+        <table class="table table-noborder" *ngIf="ink_selected">
+          <thead>
+            <tr>
+              <th>TINTA</th>
+              <th>CANTIDAD</th>
+              <th>TOTAL</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ink_selected.name}}</td>
+              <td>
+                <div class="form-group">
+                  <input type="number" id="formFields_7" placeholder="Cantidad" [(ngModel)]="quantity">
+                </div>
+              </td>
+              <td>{{(ink_selected.price * quantity) | currency:'MXN':'symbol-narrow'}}</td>
+              <td>
+                <button type="button" class="btn btn-icon" (click)="confirmInk()">
+                  <clr-icon shape="plus"></clr-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-compact" *ngIf="ink_purchases.length > 0">
+          <thead>
+            <tr>
+              <th></th>
+              <th>TINTA</th>
+              <th>CANTIDAD</th>
+              <th>COSTO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let purchase of ink_purchases">
+              <td>
+                <a (click)="removeInk(purchase.ink)" style="color: red; cursor: pointer;">
+                  <clr-icon shape="times"></clr-icon>
+                </a>
+              </td>
+              <td>{{purchase.ink?.name}}</td>
+              <td>{{purchase.quantity}}</td>
+              <td>{{purchase.total | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <b>Total</b>
+              </td>
+              <td>{{total_inks | currency:'MXN':'symbol-narrow'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="open = false; base_purchases = []; ink_purchases = [];">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="base_purchases.length == 0 && ink_purchases.length == 0" (click)="createPurchaseBase()">Confirmar</button>
+  </div>
+</clr-modal> -->
+
+<style>
+  /deep/ .completer-input {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+    -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  }
+
+  /deep/ .datagrid-row-flex {
+    flex-wrap: wrap;
+  }
+
+  .set-margin {
+    margin-left: 1em;
+  }
+</style>

@@ -1,0 +1,68 @@
+<div class="container-fluid">
+  <h2>
+    <a routerLink="/admin/paints">&#60;</a> {{paint?.color}}</h2>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-block">
+          <div class="card-title" style="display: inline-block;">Presentaciones</div>
+          <button (click)="openPresentation()" style="float: right;" type="button" class="btn btn-icon" *ngIf="paint && paint.presentations.length < 3">
+            <clr-icon shape="plus"></clr-icon>
+          </button>
+
+          <!-- Info aún no hay presentaciones -->
+          <div class="alert alert-info" style="margin-top: 2em;" *ngIf="paint && paint.presentations.length == 0">
+              <div class="alert-items">
+                <div class="alert-item static">
+                  <div class="alert-icon-wrapper">
+                    <clr-icon class="alert-icon" shape="info-circle"></clr-icon>
+                  </div>
+                  <span class="alert-text">Aún no se han registrado presentaciones para este color.</span>
+                </div>
+              </div>
+            </div>
+
+          <clr-tabs *ngIf="paint && paint.presentations.length > 0">
+            <clr-tab *ngFor="let presentation of paint?.presentations">
+              <button clrTabLink>{{presentation.name}}</button>
+              <clr-tab-content *clrIfActive="true">
+                <h4 style="display:inline-block">{{presentation.price | currency:'MXN':true }}</h4>
+
+                <button (click)="openPresentation(presentation)" style="float: right; margin-top: 0.5rem; margin-bottom: 0.5rem;" type="button" class="btn btn-icon">
+                  <clr-icon shape="pencil"></clr-icon>
+                </button>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>COLORANTE</th>
+                      <th>Onza</th>
+                      <th>Parte de onza</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let element of presentation.elements">
+                      <td>{{element.ink}}</td>
+                      <td>{{element.ounce}}</td>
+                      <td>{{element.ouncePart}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </clr-tab-content>
+            </clr-tab>
+          </clr-tabs>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<presentation-component
+[opened]="opened"
+(close)="closeModal($event)"
+(updatePresentations)="updatePresentations($event)"
+[paintId]="paintId"
+[presentation]="presentation_selected"
+[presentations_options]="presentations_options"
+>
+</presentation-component>

@@ -1,0 +1,129 @@
+<div class="content-area">
+  <div class="container-fluid">
+    <!-- <button class="btn btn-outline" (click)="addBase()">Agregar base</button> -->
+
+    <clr-datagrid>
+      <clr-dg-placeholder>No se encontraron bases registradas</clr-dg-placeholder>
+
+      <clr-dg-column [clrDgField]="'base.line.name'">
+        <ng-container *clrDgHideableColumn="{hidden: false}">Línea</ng-container>
+      </clr-dg-column>
+      <clr-dg-column [clrDgField]="'base.presentation'">
+        <ng-container *clrDgHideableColumn="{hidden: false}">Presentación</ng-container>
+      </clr-dg-column>
+      <clr-dg-column [clrDgField]="'base.base'">
+        <ng-container *clrDgHideableColumn="{hidden: false}">Base</ng-container>
+      </clr-dg-column>
+      <clr-dg-column [clrDgField]="'base.product_id'">
+        <ng-container *clrDgHideableColumn="{hidden: false}">Número de artículo</ng-container>
+      </clr-dg-column>
+      <clr-dg-column [clrDgField]="'base.bar_code'">
+        <ng-container *clrDgHideableColumn="{hidden: false}">Código de barras</ng-container>
+      </clr-dg-column>
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: false}">Precio
+        </ng-container>
+      </clr-dg-column>
+
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: true}">Base/Pintura
+        </ng-container>
+      </clr-dg-column>
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: true}">Precio de sugerido
+        </ng-container>
+      </clr-dg-column>
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: true}">Precio de venta
+        </ng-container>
+      </clr-dg-column>
+
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: false}">En existencia</ng-container>
+      </clr-dg-column>
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: false}">Mínimo</ng-container>
+      </clr-dg-column>
+      <clr-dg-column>
+        <ng-container *clrDgHideableColumn="{hidden: false}">Máximo
+        </ng-container>
+      </clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let bs of bases" [ngClass]="{'warning': bs.stock <= bs.min}">
+
+        <clr-dg-action-overflow *ngIf="user && user.role == 'User'">
+          <button class="action-item" (click)="minmax(bs)">Editar mínimos y máximos</button>
+          <button class="action-item" *ngIf="bs.base?.can_sell" (click)="sale_price(bs)">Editar precio de venta</button>
+        </clr-dg-action-overflow>
+
+        <clr-dg-cell>{{bs.base?.line?.name}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.presentation}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.base}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.product_id}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.bar_code}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.price | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+
+        <clr-dg-cell>
+          <clr-icon shape="minus" *ngIf="!bs.base?.can_sell"></clr-icon>
+          <clr-icon shape="check" *ngIf="bs.base.can_sell"></clr-icon>
+        </clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.suggestedPrice | currency:'MXN':'symbol-narrow'}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.base?.salePrice ? (bs.salePrice | currency:'MXN':'symbol-narrow') : (bs.base?.suggestedPrice | currency:'MXN':'symbol-narrow')}}</clr-dg-cell>
+
+        <clr-dg-cell>{{bs.stock}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.min}}</clr-dg-cell>
+        <clr-dg-cell>{{bs.max}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer></clr-dg-footer>
+
+    </clr-datagrid>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="modal">
+  <h3 class="modal-title">Establece mínimos y máximos</h3>
+  <div class="modal-body">
+    <form *ngIf="bs_selected">
+      <section class="form-block">
+        <div class="form-group">
+          <label for="empFirstName">Mínimo</label>
+          <input type="number" name="min" [(ngModel)]="bs_selected.min">
+        </div>
+        <div class="form-group">
+          <label for="empLastName">Máximo</label>
+          <input type="number" name="max" [(ngModel)]="bs_selected.max">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="modal = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="update_bs()">Guardar</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="modal2">
+  <h3 class="modal-title">Editar precio de venta</h3>
+  <div class="modal-body">
+    <form *ngIf="bs_selected">
+      <section class="form-block">
+        <div class="form-group">
+          <label for="empFirstName">Precio de venta</label>
+          <input type="number" name="min" [(ngModel)]="bs_selected.salePrice">
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="modal = false">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="update_bs()">Guardar</button>
+  </div>
+</clr-modal>
+
+
+<style>
+  .warning {
+    background-color: #FFECB3;
+  }
+</style>
