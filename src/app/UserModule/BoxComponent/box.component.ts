@@ -156,7 +156,8 @@ export class BoxComponent implements OnInit, OnDestroy {
 
     this.authorizationForm = new FormGroup({
       email: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required)
+      password: new FormControl('', Validators.required),
+      reason_canceled: new FormControl('', Validators.required)
     });
 
     console.log(this.ticket)
@@ -263,7 +264,7 @@ export class BoxComponent implements OnInit, OnDestroy {
       response => {
         if (response.user.role === 'Manager' || response.user.role === 'User') {
           console.log('se puede cancelar ticket')
-          this.ticketService.ticket_cancel(this.subsidiaryId, this.ticket._id).subscribe(
+          this.ticketService.ticket_cancel(this.subsidiaryId, this.ticket._id, this.authorizationForm.value.reason_canceled).subscribe(
             ticket => {
               this.ticket.canceled = ticket.canceled;
               this.canceling = false;

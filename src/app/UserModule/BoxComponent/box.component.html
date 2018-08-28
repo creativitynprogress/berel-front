@@ -210,6 +210,8 @@
     <form  [formGroup]="authorizationForm">
         <input class="control" placeholder="Email" type="email" formControlName="email" /> <br>
         <input class="control" placeholder="Contraseña" clrInput type="password" formControlName="password" />
+
+        <textarea class="control" placeholder="Razón de cancelación" rows="5" style="height: 5em; margin-top: 1em;" formControlName="reason_canceled"></textarea>
     </form>
   </div>
   <div class="modal-footer">

@@ -21,7 +21,7 @@
     </div>
 
     <div class="col-md-9" *ngIf="ticket_selected">
-      <span class="label label-danger" *ngIf="ticket_selected.canceled">Ticket cancelado</span>
+      <span class="label label-danger" *ngIf="ticket_selected.canceled">Ticket cancelado - {{ticket_selected.reason_canceled}}</span>
       <div *ngIf="ticket_selected.paints.length > 0">
         <h4>Pinturas</h4>
         <table class="table table-noborder">

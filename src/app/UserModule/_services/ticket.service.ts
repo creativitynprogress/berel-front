@@ -27,8 +27,8 @@ export class TicketService {
       .map(r => r.json());
   }
 
-  ticket_cancel(subsidiaryId: string, ticketId: string): Observable<Ticket> {
-    return this.http.put(`${API_URL}/api/subsidiary/${subsidiaryId}/ticket/${ticketId}/cancel`, {})
+  ticket_cancel(subsidiaryId: string, ticketId: string, reason_canceled): Observable<Ticket> {
+    return this.http.put(`${API_URL}/api/subsidiary/${subsidiaryId}/ticket/${ticketId}/cancel`, {reason_canceled})
       .map(r => r.json());
   }
 
