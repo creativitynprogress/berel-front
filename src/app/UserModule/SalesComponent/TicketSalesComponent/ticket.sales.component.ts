@@ -35,6 +35,28 @@ export class TicketSalesComponent implements OnInit, OnDestroy {
   private initial_date: number = 0;
   private final_date: number = 0;
 
+  public invoice_type: string = '';
+  public reasons = [
+    'Adquisición de mercancias',
+    'Devoluciones, descuentos o bonificaciones',
+    'Gastos en general',
+    'Construcciones',
+    'Mobiliario y equipo de oficina por inversores',
+    'Equipo de transporte',
+    'Equipo de computo y accesorios',
+    'Dados, troqueles, moldes, matrices y herramental',
+    'Comunicaciones telefónicas',
+    'Comunicaciones satelitales',
+    'Otra maquinaria y equipo',
+    'Gastos funerales',
+    'Donativos',
+    'Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación)',
+    'Aportaciones voluntarias al SAR',
+    'Por definir'
+  ];
+
+  public cancel_type: string = '';
+
   constructor(
     private ticketService: TicketService,
     private route: ActivatedRoute,
@@ -68,7 +90,9 @@ export class TicketSalesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
   }
 
   selectDates(dates) {
@@ -98,6 +122,24 @@ export class TicketSalesComponent implements OnInit, OnDestroy {
       });
     } else {
       this.sales_filter = this.sales;
+    }
+
+    if (this.invoice_type !== '' && this.invoice_type !== null) {
+      if (this.invoice_type === 'any_invoice') {
+        this.sales_filter = this.sales_filter.filter(p => p.invoice !== '');
+      } else if (this.invoice_type === 'no_invoice') {
+        this.sales_filter = this.sales_filter.filter(p => p.invoice === '');
+      } else {
+        this.sales_filter = this.sales_filter.filter(p => p.invoice === this.invoice_type);
+      }
+    }
+
+    if (this.cancel_type !== '' && this.cancel_type !== null) {
+      if (this.cancel_type === 'canceled') {
+        this.sales_filter = this.sales_filter.filter(p => p.canceled === true);
+      } else {
+        this.sales_filter = this.sales_filter.filter(p => p.canceled === false);
+      }
     }
 
     if (this.employee_name !== '' && this.employee_name !== null) {

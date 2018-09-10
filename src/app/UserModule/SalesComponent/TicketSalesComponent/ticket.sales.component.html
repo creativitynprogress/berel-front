@@ -33,6 +33,23 @@
               </select>
             </div>
 
+            <div class="select">
+                <select id="selects_1" [(ngModel)]="invoice_type">
+                    <option value="">Facturadas y Sin facturar</option>
+                    <option value="any_invoice">Cualquier razón de factura</option>
+                    <option value="no_invoice">Sin facturar</option>
+                    <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
+                  </select>
+            </div>
+
+            <div class="select">
+                <select id="selects_1" [(ngModel)]="cancel_type">
+                    <option value="">Cancelados y sin cancelar</option>
+                    <option value="canceled">Cancelados</option>
+                    <option value="no_canceled">Sin cancelar</option>
+                  </select>
+            </div>
+
             <div class="select" *ngIf="sales_type == 'paints_bases'">
               <select id="selects_1" [(ngModel)]="line">
                 <option value="select">Todas las líneas</option>
@@ -66,6 +83,7 @@
         <clr-dg-placeholder>No se encontraron tickets</clr-dg-placeholder>
 
         <clr-dg-column>Folio</clr-dg-column>
+        <clr-dg-column>Factura</clr-dg-column>
         <clr-dg-column>Cliente</clr-dg-column>
         <clr-dg-column>Vendedor</clr-dg-column>
         <clr-dg-column>Fecha</clr-dg-column>
@@ -76,8 +94,9 @@
         <clr-dg-column>Cantidad</clr-dg-column>
         <clr-dg-column>Total</clr-dg-column>
 
-        <clr-dg-row *ngFor="let sale of sales_filter">
+        <clr-dg-row *ngFor="let sale of sales_filter" [ngClass]="{'canceled': sale.canceled}">
           <clr-dg-cell>{{sale.folio}}</clr-dg-cell>
+          <clr-dg-cell>{{sale.invoice || 'N/A'}}</clr-dg-cell>
           <clr-dg-cell>{{sale.client}}</clr-dg-cell>
           <clr-dg-cell>{{sale.seller}}</clr-dg-cell>
           <clr-dg-cell>{{sale.date | date:'dd/MM/yyyy'}}</clr-dg-cell>
@@ -96,6 +115,10 @@
 <style>
   .select {
     margin-top: 1em;
+  }
+
+  .canceled {
+    background-color: #FFEBEE;
   }
 
   /deep/ .mydrp {

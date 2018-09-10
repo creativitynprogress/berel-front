@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <!-- <button class="btn btn-outline" (click)="addBase()">Agregar base</button> -->
 
-    <clr-datagrid>
+    <clr-datagrid [ngClass]="{'prevent': bases.length < 8}">
       <clr-dg-placeholder>No se encontraron bases registradas</clr-dg-placeholder>
 
       <clr-dg-column [clrDgField]="'base.line.name'">
@@ -125,5 +125,9 @@
 <style>
   .warning {
     background-color: #FFECB3;
+  }
+
+  .prevent {
+    margin-top: 13em;
   }
 </style>

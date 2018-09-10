@@ -164,6 +164,7 @@ export class AnalysisComponent implements OnInit {
 
           this.incomes = [];
           this.expenses = [];
+          const oneDay = 24 * 60 * 60 * 1000;
 
           for (let i = 0; i <= total_days; i++) {
             this.incomes.push(0);
@@ -171,15 +172,15 @@ export class AnalysisComponent implements OnInit {
           }
 
           response.incomes.forEach(t => {
-            const date = new Date(t.date).getDate() - initial_date.getDate();
-            this.incomes[date] += t.total;
+            const diffDays = Math.round(Math.abs((new Date(t.date).getTime() - initial_date.getTime()) / (oneDay)));
+            this.incomes[diffDays] += t.total;
           });
 
           response.purchases.map(p => {
-            const date = new Date(p.date).getMonth() - initial_date.getDate();
-            this.expenses[date] += this.calculate_total(p.bases);
-            this.expenses[date] += this.calculate_total(p.inks);
-            this.expenses[date] += this.calculate_total(p.products_owner);
+            const diffDays = Math.round(Math.abs((new Date(p.date).getTime() - initial_date.getTime()) / (oneDay)));
+            this.expenses[diffDays] += this.calculate_total(p.bases);
+            this.expenses[diffDays] += this.calculate_total(p.inks);
+            this.expenses[diffDays] += this.calculate_total(p.products_owner);
           });
 
           this.lineChartData = [

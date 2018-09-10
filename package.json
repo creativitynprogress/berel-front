@@ -1,12 +1,13 @@
 {
   "name": "BCODECOLORS",
   "description": "BCODE COLORS",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --locale es-MX",
+    "electron:build": "electron-builder -w",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -14,6 +15,19 @@
     "electron:tsc": "tsc main.ts",
     "electron:serve": "wait-on http-get://localhost:4200/ && npm run electron:tsc && electron . --serve"
   },
+  "build": {
+    "directories": {
+      "buildResources": "."
+    },
+    "win": {
+
+    }
+  },
+  "files": [
+    "*.js",
+    "build",
+    "node_modules"
+  ],
   "private": true,
   "dependencies": {
     "@angular/animations": "5.0.0",
@@ -32,7 +46,6 @@
     "angular2-jwt": "0.2.3",
     "chart.js": "2.7.1",
     "core-js": "2.4.1",
-    "electron-squirrel-startup": "1.0.0",
     "mydatepicker": "2.6.3",
     "mydaterangepicker": "4.2.1",
     "ng-snotify": "4.2.0",
@@ -51,26 +64,11 @@
     "@types/jasminewd2": "2.0.2",
     "@types/node": "6.0.60",
     "codelyzer": "3.2.0",
-    "electron": "^2.0.6",
-    "electron-builder": "^20.27.1",
-    "electron-builder-squirrel-windows": "^20.28.0",
-    "electron-packager": "^12.1.0",
-    "electron-reload": "^1.2.5",
-    "electron-squirrel-startup": "1.0.0",
-    "electron-winstaller": "^2.6.4",
-    "jasmine-core": "2.6.2",
-    "jasmine-spec-reporter": "4.1.0",
-    "karma": "1.7.0",
-    "karma-chrome-launcher": "2.1.1",
-    "karma-cli": "1.0.1",
-    "karma-coverage-istanbul-reporter": "1.2.1",
-    "karma-jasmine": "1.1.0",
-    "karma-jasmine-html-reporter": "0.2.2",
-    "npx": "^10.2.0",
+    "electron": "2.0.6",
+    "electron-builder": "^20.28.3",
     "protractor": "5.1.2",
     "ts-node": "3.2.0",
     "tslint": "5.7.0",
-    "typescript": "2.4.2",
-    "wait-on": "^2.1.0"
+    "typescript": "2.4.2"
   }
 }
