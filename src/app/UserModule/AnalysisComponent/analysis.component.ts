@@ -17,7 +17,7 @@ export class AnalysisComponent implements OnInit {
   private expenses: any[] = [];
   public lineChartData: Array<any> = [
     { data: this.incomes, label: "Ingresos" },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: "Egresos" }
+    { data: [], label: "Egresos" }
   ];
   public lineChartLabels: Array<any> = [
     "Enero",
